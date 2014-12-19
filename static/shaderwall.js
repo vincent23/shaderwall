@@ -13,6 +13,8 @@ var Shaderwall = function() {
 
 	this.glState = {
 		posAttribute: -1,
+		resolutionUniform: -1,
+		timeUniform: -1,
 	};
 
 	this.reloadShaders(this.editor.getValue());
@@ -84,11 +86,14 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	var posAttribute = gl.getAttribLocation(program, "pos");
 	gl.enableVertexAttribArray(posAttribute);
 	this.glState.posAttribute = posAttribute;
+	this.glState.resolutionUniform = gl.getUniformLocation(program, "resolution");
+	this.glState.timeUniform = gl.getUniformLocation(program, "time");
 };
 
 Shaderwall.prototype.draw = function() {
 	var gl = this.gl;
 	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
+	gl.uniform2f(this.glState.resolutionUniform, 640, 480);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 };
 
