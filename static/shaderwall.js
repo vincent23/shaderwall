@@ -18,11 +18,11 @@ var Shaderwall = function() {
 	};
 
 	this.reloadShaders(this.editor.getValue());
-	this.draw();
 	this.editor.on("change", (function() {
 		this.reloadShaders(this.editor.getValue());
 		this.draw();
 	}).bind(this));
+	this.draw(0.0);
 };
 
 Shaderwall.prototype.initGL = function(canvas) {
@@ -90,11 +90,13 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	this.glState.timeUniform = gl.getUniformLocation(program, "time");
 };
 
-Shaderwall.prototype.draw = function() {
+Shaderwall.prototype.draw = function(time) {
 	var gl = this.gl;
 	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
 	gl.uniform2f(this.glState.resolutionUniform, 640, 480);
+	gl.uniform1f(this.glState.timeUniform, time / 1000);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+	window.requestAnimationFrame(this.draw.bind(this));
 };
 
 $(document).ready(function() {
