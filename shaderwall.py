@@ -7,12 +7,23 @@ def main():
     setup_db()
     bottle.run(host='localhost', port=8080)
 
+@bottle.route('/')
+@bottle.view('static/gallery.html')
+def get_gallery():
+    return { 'shaders': list_shaders() }
+
+@bottle.route('/edit')
+@bottle.view('static/editor.html')
+def get_gallery():
+    return {}
+
+@bottle.route('/lib/<path:path>')
+def get_static(path):
+    return bottle.static_file(path, root='./static/lib')
+
 @bottle.get('/shaders')
 def get_shader_list():
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM shader')
-    shaders = cursor.fetchall()
-    return '<br>'.join(str(shader) for shader in shaders)
+    return '<br>'.join(str(shader) for shader in list_shaders())
 
 @bottle.post('/shaders')
 def create_shader():
@@ -51,5 +62,10 @@ def setup_db():
                         created TEXT DEFAULT CURRENT_TIMESTAMP
                       )''')
     conn.commit()
+
+def list_shaders():
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM shader')
+    return cursor.fetchall()
 
 main()
