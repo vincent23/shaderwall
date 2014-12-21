@@ -1,0 +1,5 @@
+canvas#glcanvas {
+	position: fixed;
+	left: 0px;
+	top: 50px;
+}

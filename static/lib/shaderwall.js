@@ -26,6 +26,7 @@ var Shaderwall = function() {
 		timeUniform: -1,
 	};
 
+	this.updateSize();
 	this.reloadShaders(this.editor.getValue());
 	this.editor.on("change", (function() {
 		this.reloadShaders(this.editor.getValue());
@@ -118,6 +119,17 @@ Shaderwall.prototype.draw = function(time) {
 	window.requestAnimationFrame(this.draw.bind(this));
 };
 
+Shaderwall.prototype.updateSize = function() {
+	var canvas = this.canvas;
+	var newWidth = document.documentElement.clientWidth;
+	var newHeight = document.documentElement.clientHeight - 50 /*height of navbar*/;
+	if (canvas.width != newWidth || canvas.height != newHeight) {
+		canvas.width = newWidth;
+		canvas.height = newHeight;
+		this.gl.viewport(0, 0, newWidth, newHeight);
+	}
+};
+
 $(document).ready(function() {
 	var shaderwall = new Shaderwall();
 	$('#save-button').click(function () {
@@ -156,5 +168,27 @@ $(document).ready(function() {
 			editor.setOption('vimMode', false);
 		}
 	});
+
+	// register a callback function for window resizes
+	// but only call the actual resize function if enough time has elasped since the last time
+	// code from mozilla website
+	// this callback could be fired rapidly
+	window.addEventListener("resize", resizeThrottler, false);
+	var resizeTimeout;
+	function resizeThrottler() {
+		// ignore resize events as long as an actualResizeHandler execution is in the queue
+		if ( !resizeTimeout ) {
+			// some kind of queue
+			resizeTimeout = setTimeout(function() {
+				resizeTimeout = null;
+				actualResizeHandler();
+
+			// The actualResizeHandler will execute at a rate of 5fps
+			}, 100);
+		}
+	}
+	function actualResizeHandler() {
+		shaderwall.updateSize();
+	}
 });
 
