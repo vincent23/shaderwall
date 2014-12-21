@@ -65,7 +65,9 @@ def save_screenshot(shader_id, screenshot):
         if not screenshot[:22] == 'data:image/png;base64,':
             return False
         screenshot = base64.b64decode(screenshot[22:])
-        open("uploads/%d.png" % shader_id, "w").write(screenshot);
+        screenshot_file = open("uploads/%d.png" % shader_id, "w")
+        screenshot_file.write(screenshot)
+        screenshot_file.close()
         return True
     except:
         return False
