@@ -110,7 +110,7 @@ $(document).ready(function() {
 		dummycanvas.width = 400;
 		var dummycontext = dummycanvas.getContext("2d");
 		dummycontext.drawImage(canvas, 0, 0, dummycanvas.width, dummycanvas.height)
-		var screenshot = dummycanvas.toDataURL("image/jpeg");
+		var screenshot = dummycanvas.toDataURL("image/png");
 
 		$.post("shaders", { 'source': source, 'screenshot': screenshot, },function(data) {
 			alert(data);

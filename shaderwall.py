@@ -1,5 +1,8 @@
 import bottle
 import sqlite3 as sql
+import base64
+
+bottle.BaseRequest.MEMFILE_MAX = 1024 * 1024 # 1MB
 
 def main():
     global conn
@@ -11,7 +14,7 @@ def main():
 @bottle.view('static/gallery.html')
 def get_gallery():
     cursor = conn.cursor()
-    cursor.execute('SELECT id,source,screenshot,created FROM shader')
+    cursor.execute('SELECT id,source,created FROM shader')
     return { 'shaders': cursor.fetchall() }
 
 @bottle.route('/edit')
@@ -36,13 +39,28 @@ def get_gallery(shader_id=None):
 def get_static(path):
     return bottle.static_file(path, root='./static/lib')
 
+@bottle.route('/screenshots/<path:path>')
+def get_screenshot(path):
+    return bottle.static_file(path, root='./uploads')
+
 @bottle.post('/shaders')
 def create_shader():
     source = bottle.request.params.getunicode('source')
     screenshot = bottle.request.params.getunicode('screenshot')
+    if not screenshot[:22] == 'data:image/png;base64,':
+        return bottle.abort(418, "I'm a teapot.")
+
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO shader (source, screenshot) VALUES (?,?)', (source,screenshot,))
+    cursor.execute('INSERT INTO shader (source) VALUES (?)', (source,))
     conn.commit()
+    new_shader_id = cursor.lastrowid
+    try:
+        screenshot = base64.b64decode(screenshot[22:])
+        open("uploads/%d.png" % cursor.lastrowid, "w").write(screenshot);
+    except:
+        cursor.execute('DELETE FROM shader WHERE id = ?', (new_shader_id))
+        return bottle.abort(500, "Internal Server Error")
+
     return 'Created new shader ' + str(cursor.lastrowid)
 
 @bottle.get('/shaders/<shader_id:int>')
@@ -58,8 +76,9 @@ def get_shader(shader_id):
 @bottle.post('/shaders/<shader_id:int>')
 def edit_shader(shader_id):
     source = bottle.request.params.getunicode('source')
+    authcode = bottle.request.params.getunicode('authcode')
     cursor = conn.cursor()
-    cursor.execute('UPDATE shader SET source = ? WHERE id = ?' , (source, shader_id))
+    cursor.execute('UPDATE shader SET source = ? WHERE id = ? AND authcode = ?' , (source, shader_id, authcode))
     conn.commit()
     if cursor.rowcount == 1:
         return 'Updated shader'
@@ -71,7 +90,7 @@ def setup_db():
     cursor.execute('''CREATE TABLE IF NOT EXISTS shader (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         source TEXT,
-                        screenshot TEXT,
+                        authcode TEXT,
                         created TEXT DEFAULT CURRENT_TIMESTAMP
                       )''')
     conn.commit()
