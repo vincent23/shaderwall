@@ -104,7 +104,13 @@ $(document).ready(function() {
 	$('#save-button').click(function () {
 		var source = shaderwall.editor.getValue();
 		var canvas = document.getElementById("glcanvas");
-		var screenshot = canvas.toDataURL("image/png");
+		var dummycanvas = document.createElement("canvas");
+		dummycanvas.height = 300;
+		dummycanvas.width = 400;
+		var dummycontext = dummycanvas.getContext("2d");
+		dummycontext.drawImage(canvas, 0, 0, dummycanvas.width, dummycanvas.height)
+		var screenshot = dummycanvas.toDataURL("image/jpeg");
+
 		$.post("shaders", { 'source': source, 'screenshot': screenshot, },function(data) {
 			alert(data);
 		});
