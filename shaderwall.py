@@ -5,7 +5,7 @@ def main():
     global conn
     conn = sql.connect('shaderwall.db')
     setup_db()
-    bottle.run(host='localhost', port=8080)
+    bottle.run(host='localhost', port=8080, debug=True)
 
 @bottle.route('/')
 @bottle.view('static/gallery.html')

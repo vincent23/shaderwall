@@ -101,4 +101,10 @@ Shaderwall.prototype.draw = function(time) {
 
 $(document).ready(function() {
 	var shaderwall = new Shaderwall();
+	$('#save-button').click(function () {
+		var source = shaderwall.editor.getValue();
+		$.post("shaders", { 'source': source },function(data) {
+			alert(data);
+		});
+	});
 });
