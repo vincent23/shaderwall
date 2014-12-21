@@ -28,8 +28,9 @@ def get_shader_list():
 @bottle.post('/shaders')
 def create_shader():
     source = bottle.request.params.getunicode('source')
+    screenshot = bottle.request.params.getunicode('screenshot')
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO shader (source) VALUES (?)', (source,))
+    cursor.execute('INSERT INTO shader (source, screenshot) VALUES (?,?)', (source,screenshot,))
     conn.commit()
     return 'Created new shader ' + str(cursor.lastrowid)
 
@@ -59,6 +60,7 @@ def setup_db():
     cursor.execute('''CREATE TABLE IF NOT EXISTS shader (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         source TEXT,
+                        screenshot TEXT,
                         created TEXT DEFAULT CURRENT_TIMESTAMP
                       )''')
     conn.commit()

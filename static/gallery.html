@@ -7,10 +7,10 @@
 </div>
 <div class="container">
 	<div class="row">
-		% for id, source, date in shaders:
+		% for id, source, screenshot, date in shaders:
 		<div class="col-lg-3 cold-md-4 cold-xs-6">
 			<a class="thumbnail" href="/shaders/{{ id }}">
-				<img src="http://lorempixel.com/400/300" alt="Generic placeholdernail" class="img-responsive">
+				<img src="{{ screenshot }}" alt="Generic placeholdernail" class="img-responsive">
 			</a>
 		</div>
 		% end

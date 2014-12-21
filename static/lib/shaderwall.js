@@ -28,10 +28,10 @@ var Shaderwall = function() {
 Shaderwall.prototype.initGL = function(canvas) {
 	var gl = null;
 	try {
-		gl = canvas.getContext("webgl");
+		gl = canvas.getContext("webgl", {preserveDrawingBuffer: true});
 	} catch(e) {
 		try {
-			gl = canvas.getContext("experimental-webgl");
+			gl = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
 		} catch(e) {
 		}
 	}
@@ -103,8 +103,11 @@ $(document).ready(function() {
 	var shaderwall = new Shaderwall();
 	$('#save-button').click(function () {
 		var source = shaderwall.editor.getValue();
-		$.post("shaders", { 'source': source },function(data) {
+		var canvas = document.getElementById("glcanvas");
+		var screenshot = canvas.toDataURL("image/png");
+		$.post("shaders", { 'source': source, 'screenshot': screenshot, },function(data) {
 			alert(data);
 		});
 	});
 });
+
