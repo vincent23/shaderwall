@@ -36,6 +36,11 @@
 							<li {{! 'class="active"' if get('active', '') == link else ''}}><a href="/{{ link }}">{{ label }}</a></li>
 						% end
 					</ul>
+					% if get('edit_mode'):
+					<div class="navbar-right navbar-form">
+						<button type="submit" class="btn btn-primary" id="save-button">Save</button>
+					</div>
+					% end
 				</div>
 			</div>
 		</nav>
