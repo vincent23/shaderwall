@@ -112,9 +112,14 @@ $(document).ready(function() {
 		dummycontext.drawImage(canvas, 0, 0, dummycanvas.width, dummycanvas.height)
 		var screenshot = dummycanvas.toDataURL("image/png");
 
-		$.post("shaders", { 'source': source, 'screenshot': screenshot, },function(data) {
-			alert(data);
-		});
+		$.post(save_url, { 'source': source, 'screenshot': screenshot, 'authcode': authcode, },function(data) {
+			console.log(data);
+			if(data['id'] >= 0) {
+				self.location.href = '/edit/' + data['id'] + '?authcode=' + data['authcode'];
+			}else{
+				alert(data);
+			}
+		}, "json");
 	});
 });
 
