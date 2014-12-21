@@ -69,7 +69,6 @@ Shaderwall.prototype.compileShader = function(source, type) {
 	gl.shaderSource(shader, source);
 	gl.compileShader(shader);
 	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-		this.errors = [];
 		// der (noch nicht ganz so) gute!
 		var errorRegex = /ERROR:.*:([0-9]+): (.*)/;
 		gl.getShaderInfoLog(shader).split('\n').forEach(function(line) {
@@ -88,6 +87,7 @@ Shaderwall.prototype.compileShader = function(source, type) {
 };
 
 Shaderwall.prototype.reloadShaders = function(fragmentSource) {
+	this.errors = [];
 	var gl = this.gl;
 	var vertexSource = "#ifdef GL_ES\nprecision mediump float;\n#endif\nattribute vec2 pos;\nvoid main(void) {\ngl_Position = vec4(pos, 0.0, 1.0);\n}\n";
 	var fragment = this.compileShader(fragmentSource, gl.FRAGMENT_SHADER);
