@@ -11,6 +11,7 @@
 
 		<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/lib/codemirror/lib/codemirror.css" rel="stylesheet">
+		<link href="/lib/codemirror/addon/lint/lint.css" rel="stylesheet">
 	</head>
 	<body>
 		<nav class="navbar navbar-default navbar-static-top" role="navigation">
@@ -52,6 +53,7 @@
 
 		% if get('edit_mode'):
 		<script src="/lib/codemirror/lib/codemirror.js"></script>
+		<script src="/lib/codemirror/addon/lint/lint.js"></script>
 		<script src="/lib/codemirror/mode/glsl.js"></script>
 		<script src="/lib/raf.js"></script>
 		<script src="/lib/shaderwall.js"></script>

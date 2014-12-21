@@ -1,4 +1,10 @@
 var Shaderwall = function() {
+	this.errors = [];
+
+	CodeMirror.registerHelper("lint", "glsl", function(text) {
+		return this.errors;
+	}.bind(this));
+
 	this.editor = CodeMirror(document.body, {
 		value: shaderSource,
 
@@ -7,6 +13,8 @@ var Shaderwall = function() {
 		indentWithTabs: true,
 		indentUnit: 4,
 		lineWrapping: true,
+		gutters: ["CodeMirror-lint-markers"],
+		lint: true
 	});
 
 	this.canvas = document.getElementById("glcanvas");
@@ -61,7 +69,17 @@ Shaderwall.prototype.compileShader = function(source, type) {
 	gl.shaderSource(shader, source);
 	gl.compileShader(shader);
 	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-		//alert("Shader compile error: " + gl.getShaderInfoLog(shader));
+		this.errors = [];
+		// der (noch nicht ganz so) gute!
+		var errorRegex = /ERROR:.*:([0-9]+): (.*)/;
+		gl.getShaderInfoLog(shader).split('\n').forEach(function(line) {
+			var match = line.match(errorRegex);
+			if (match !== null) {
+				var line = match[1] - 1;
+				var error_message = match[2];
+				this.errors.push({from: CodeMirror.Pos(line, 0), to: CodeMirror.Pos(line), message: error_message});
+			}
+		}.bind(this));
 		console.log(gl.getShaderInfoLog(shader));
 		return null;
 	} else {
