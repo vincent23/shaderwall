@@ -13,9 +13,22 @@ def get_gallery():
     return { 'shaders': list_shaders() }
 
 @bottle.route('/edit')
+@bottle.route('/edit/<shader_id:int>')
 @bottle.view('static/editor.html')
-def get_gallery():
-    return {}
+def get_gallery(shader_id=None):
+    if shader_id:
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, source FROM shader WHERE id = ?', (shader_id,))
+        result = cursor.fetchone()
+        if result:
+            return {
+                'shader_id': result[0],
+                'shader_source': result[1],
+            }
+        else:
+            return {}
+    else:
+        return {}
 
 @bottle.route('/lib/<path:path>')
 def get_static(path):

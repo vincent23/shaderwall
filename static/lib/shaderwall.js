@@ -1,6 +1,7 @@
 var Shaderwall = function() {
 	this.editor = CodeMirror(document.body, {
-		value: "#ifdef GL_ES\nprecision mediump float;\n#endif\nuniform float time;\nuniform vec2 resolution;\nvoid main(void)\n{\n\tgl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n}\n",
+		value: shaderSource,
+
 		mode: "glsl",
 		lineNumbers: true,
 		indentWithTabs: true,
