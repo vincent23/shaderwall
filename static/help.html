@@ -103,9 +103,73 @@ void main(void)
 				</div>
 				<div id="swizzling">
 					<h3>Swizzling</h3>
+					<p>
+					So we just learned how you can access the individual components of a vector.
+					But why should you be limited to only one component?
+					It sure would be nice if could get multiple components as another vector.
+					The simple but useful technique allowing you to do this is called <b>swizzling</b>.
+					</p>
+					<p>
+					So suppose you have a vector like this: <code>vec4 v = vec4(0.0, 1.0, 2.0, 3.0);</code>.
+					You can create a <code>vec2</code> containing only the first two components from this just like this: <code>vec2 u = v.xy;</code>.
+					Or maybe you just want the last two?
+					Just do <code>vec2 u = v.zw;</code>.
+					Some more examples:
+					</p>
+					<pre>vec4 v = vec4(0.0, 1.0, 2.0, 3.0);
+vec4 v_reversed = v.wzyx; // you can change the order of the components
+vec3 u = v.yxx; // or reuse components
+float l = length(v.yxw); // in every context</pre>
 				</div>
 				<div id="control">
 					<h3>Control structures</h3>
+					<p>
+					You can have <code>while</code> and <code>for</code> loops and <code>if-else</code>-statements like in C, so they aren't very interesting.
+					</p>
+					<pre>// some stupid loops
+float foo = 1.0;
+while (foo &gt; 1e-3) {
+	foo /= 3.0;
+}
+
+float bar = 0.0;
+for (int i = 0; i &lt; 5; i++) {
+	bar += float(i);
+}
+
+float baz;
+if (bar &lt; 4.0) {
+	baz = 1.0;
+} else {
+	baz = 2.0;
+}</pre>
+					<p>
+					Functions work a bit differently in GLSL, because there is no stack.
+					This means you can't use recursion, i.e. call a function from itself or from a function called by the function.
+					Also, because there are no pointers, there is a thing called <code>out</code> and <code>inout</code> parameters.
+					</p>
+					<pre>float someFunction(vec2 foo, out float bar) {
+	// output the second component to bar
+	bar = foo.y;
+	// return the first component
+	return foo.x;
+}
+
+float someOtherFunction(inout float foo) {
+	// you are not allowed to access the value of a 'out' parameter
+	// so there is 'inout', which can be used for input as well as output
+	foo += 5.0;
+	return foo + 3.0;
+}
+
+void main() {
+	// you call someFunction() like this
+	float b;
+	float a = someFunction(vec2(1.0, 2.0), b);
+	// a is now 1.0, b is 2.0
+	a = someOtherFunction(b);
+	// a is now 10.0, b is 7.0
+}</pre>
 				</div>
 			</section>
 			<section id="functions">
