@@ -32,7 +32,6 @@ var Shaderwall = function() {
 	this.reloadShaders(this.editor.getValue());
 	this.editor.on("change", (function() {
 		this.reloadShaders(this.editor.getValue());
-		this.draw();
 	}).bind(this));
 	this.draw(0.0);
 };
