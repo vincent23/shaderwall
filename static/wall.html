@@ -16,4 +16,11 @@
 		var save_url = '{{ save_url }}';
 		var save_button_text = '{{ save_button_text }}';
 		var authcode = '{{ authcode }}';
+		setInterval(function() {
+			$.get("/wall/wat", function(data) {
+				if(data['id'] != shaderId) {
+					self.location.href = '/wall/' + data['id'];
+				}
+			}, 'json');
+		}, 1000);
 </script>

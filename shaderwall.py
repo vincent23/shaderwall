@@ -22,10 +22,16 @@ def get_gallery(page=1):
     cursor.execute('SELECT id,source,created FROM shader ORDER by id DESC LIMIT ?, ?', (items_per_page * (page - 1), items_per_page))
     return { 'shaders': cursor.fetchall(), 'page': page, 'total_pages': total_pages }
 
-@app.route('/wall')
+@app.route('/wall/wat')
+def wat_wall():
+    datfile = open("watid","r")
+    datid = int(datfile.read())
+    datfile.close()
+    return json.dumps({'id': datid})
+
 @app.route('/wall/<shader_id:int>')
 @bottle.view('static/wall.html')
-def get_gallery(shader_id=None):
+def get_wall(shader_id):
     if shader_id:
         cursor = conn.cursor()
         cursor.execute('SELECT id, source FROM shader WHERE id = ?', (shader_id,))
