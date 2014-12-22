@@ -1,0 +1,119 @@
+% rebase('static/base.html', active='help')
+<div class="container">
+	<div class="row">
+		<div class="col-xs-9">
+			<h1 id="learnyou" class="page-header">Learn you some GLSL for great good!</h1>
+			<p class="lead">
+				This tutorial gives a short introduction to creating effects on shaderwall.
+				Some basic shader programming using GLSL is covered, as well as some general tips and ideas to start with.
+			</p>
+			<section id="starting">
+				<h2>Starting out</h2>
+				<div id="whatshaders">
+					<h3>So what are those shader thingies, anyway?</h3>
+					<p>
+					A shader is just a program running on your graphics card, which enables it to run very fast (depending on your hardware).
+					There are many different kinds of shaders, but that isn't really important for our purposes at the moment.
+					Everything you're going to write on shaderwall is called a <b>fragment shader</b>.
+					</p>
+					<p>
+					Fragment shaders, also known as pixel shaders, are (in short) executed for every pixel of the output, so we're just going to write a small program that calculates a color for that pixel.
+					To make it look interesting the color should of course depend on the pixel's position and maybe also on time.
+					</p>
+				</div>
+				<div id="firstshader">
+					<h3>My first fragment shader</h3>
+					<p>
+					Shaders are written in a programming language called GLSL, which is a bit like C, except it has no pointers but some nice other builtin data types and functions.
+					Let's write a quick 'Hello World'-style shader!
+					By the way: you can try out all the examples by just pasting them in the shaderwall editor.
+					</p>
+					<pre>// ignore those first three lines
+#ifdef GL_ES
+precision mediump float;
+#endif
+
+// declare inputs to our shader
+uniform float time;
+uniform vec2 resolution;
+
+// main function for our shader
+void main(void)
+{
+	vec2 position = gl_FragCoord.xy / resolution;
+	// write output color
+	gl_FragColor = vec4(position, sin(time) * 0.5 + 0.5, 1.0);
+}</pre>
+					<p>
+					So as you can see, it pretty much looks like C (or any language using C syntax).
+					At first we are declaring some <code>uniform</code> variables.
+					These are set by the host program, so shaderwall in our case, and have the same value for all pixels.
+					<code>time</code> contains the time in seconds since loading the shader and <code>resolution</code> is a two-dimensional vector (<code>vec2</code>) containing width and height of the output.
+					</p>
+					<p>
+					Next, the main function is declared, which is the entry point for your shader.
+					In this function, we divide a special value <code>gl_FragCoord.xy</code> by the resolution.
+					Variables prefixed with <code>gl_</code> are special variables set by OpenGL, in this case it contains the respective pixel position.
+					For now, just ignore the <code>.xy</code> part, it's a nice little thing called <b>swizzling</b> and will be covered later.
+					So by dividing these two values, we get a two-dimensional vector with values between 0 and 1.
+					</p>
+					<p>
+					At last, we're assigning a value to <code>gl_FragColor</code>, which is another special variable for our output color.
+					It's a four-dimensional vector, but we only care about the first three components.
+					These are the three color channels for red, green and blue.
+					Because <code>position</code> is a two-dimensional vector, it is assigned to the first two components of the output color.
+					To the remaining blue component we assign <code>sin(time) * 0.5 + 0.5</code>, which is just a sine applied to the <code>time</code> input with some rescaling to stay in the <code>[0, 1]</code> range.
+					</p>
+					<p>
+					So just copy and paste the code into the shaderwall editor and look at the result.
+					It should give you some gradient with a changing amount of blue color.
+					Not verry pretty, but it's a start!
+					<p>
+				</div>
+			</section>
+			<section id="glsl">
+				<h2>Basic GLSL</h2>
+				<div id="data">
+					<h3>Data types</h3>
+				</div>
+				<div id="swizzling">
+					<h3>Swizzling</h3>
+				</div>
+				<div id="control">
+					<h3>Control structures</h3>
+				</div>
+			</section>
+			<section id="functions">
+				<h2>Useful functions</h2>
+			</section>
+			<section id="external">
+				<h2>External ressources</h2>
+			</section>
+		</div>
+
+		<nav class="col-xs-3 bs-docs-sidebar">
+			<ul id="sidebar" class="nav nav-stacked fixed">
+				<li><a href="#learnyou">Learn you some GLSL…</a></li>
+				<li>
+					<a href="#starting">Starting out</a>
+					<ul class="nav nav-stacked">
+						<li><a href="#whatshaders">So what are those…</a></li>
+						<li><a href="#firstshader">My first shader</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#glsl">Basic GLSL</a>
+					<ul class="nav nav-stacked">
+						<li><a href="#data">Data types</a></li>
+						<li><a href="#swizzling">Swizzling</a></li>
+						<li><a href="#control">Control structures</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#functions">Useful functions</a>
+				</li>
+				<li><a href="#external">External ressources</a></li>
+			</ul>
+		</nav>
+	</div>
+</div>

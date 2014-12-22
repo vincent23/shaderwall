@@ -34,6 +34,7 @@
 							nav_items = [
 								('', 'Gallery'),
 								('edit', 'Create'),
+								('help', 'Help'),
 							]
 						%>
 						% for link, label in nav_items:
@@ -73,5 +74,13 @@
 		<script src="/lib/raf.js"></script>
 		<script src="/lib/shaderwall.js"></script>
 		% end
+		<script>
+$(document).ready(function() {
+$('body').scrollspy({
+    target: '.bs-docs-sidebar',
+    offset: 40
+});
+});
+		</script>
 	</body>
 </html>
