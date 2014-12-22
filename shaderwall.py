@@ -17,7 +17,7 @@ def main():
 @bottle.view('static/gallery.html')
 def get_gallery():
     cursor = conn.cursor()
-    cursor.execute('SELECT id,source,created FROM shader')
+    cursor.execute('SELECT id,source,created FROM shader ORDER by id DESC')
     return { 'shaders': cursor.fetchall() }
 
 @bottle.route('/edit')
