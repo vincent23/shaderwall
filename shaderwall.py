@@ -54,7 +54,7 @@ def get_static(path):
 
 @bottle.route('/screenshots/<path:path>')
 def get_screenshot(path):
-    return bottle.static_file(path, root='./uploads')
+    return bottle.static_file(path, root='./uploads', mimetype='image/png')
 
 # generate 32byte authentication code
 def generate_authcode():
