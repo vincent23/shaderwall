@@ -71,6 +71,11 @@ def get_gallery(shader_id=None):
     else:
         return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': ''}
 
+@app.route('/help')
+@bottle.view('static/help.html')
+def get_help():
+    return {}
+
 @app.route('/lib/<path:path>')
 def get_static(path):
     return bottle.static_file(path, root='./static/lib')
