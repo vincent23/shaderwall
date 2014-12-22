@@ -7,7 +7,6 @@ var Shaderwall = function() {
 
 	this.editor = CodeMirror(document.body, {
 		value: shaderSource,
-
 		mode: "glsl",
 		lineNumbers: true,
 		indentWithTabs: true,
@@ -17,6 +16,7 @@ var Shaderwall = function() {
 		lint: true,
 		scrollbarStyle: "null",
 		theme: "zenburn",
+		extraKeys: {"Ctrl-Space": "autocomplete"},
 	});
 
 	this.canvas = document.getElementById("glcanvas");
