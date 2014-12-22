@@ -146,8 +146,17 @@ $(document).ready(function() {
 
 		$.post(save_url, { 'source': source, 'screenshot': screenshot, 'authcode': authcode, },function(data) {
 			console.log(data);
-			if(data['id'] >= 0) {
+			if(data['redirect']) {
 				self.location.href = '/edit/' + data['id'] + '?authcode=' + data['authcode'];
+			}else if(data['id'] > 0){
+				document.getElementById('save-button').innerHTML = 'Saved!';
+				$('#save-button').removeClass("btn-default");
+				$('#save-button').addClass("btn-success");
+				setTimeout(function() {
+					$('#save-button').addClass("btn-default");
+					$('#save-button').removeClass("btn-success");
+					document.getElementById('save-button').innerHTML = save_button_text;
+				}, 2000);
 			}else{
 				alert(data);
 			}

@@ -86,7 +86,7 @@ def create_shader():
         cursor.execute('DELETE FROM shader WHERE id = ?', (new_shader_id))
         return bottle.abort(500, "Internal Server Error")
 
-    return json.dumps({'id': new_shader_id, 'authcode': new_authcode})
+    return json.dumps({'id': new_shader_id, 'authcode': new_authcode, 'redirect': True})
 
 @bottle.get('/shaders/<shader_id:int>')
 def get_shader(shader_id):
@@ -110,7 +110,7 @@ def edit_shader(shader_id):
         print("yo?")
 
     if cursor.rowcount == 1:
-        return json.dumps({'id': shader_id, 'authcode': authcode})
+        return json.dumps({'id': shader_id, 'authcode': authcode, 'redirect': False})
     else:
         bottle.abort(403, 'Update failed')
 
