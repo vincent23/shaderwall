@@ -14,11 +14,17 @@ def main():
     bottle.run(host='localhost', port=8080, debug=True)
 
 @bottle.route('/')
+@bottle.route('/gallery/<page:int>')
 @bottle.view('static/gallery.html')
-def get_gallery():
+def get_gallery(page=1):
+    items_per_page = 16
     cursor = conn.cursor()
-    cursor.execute('SELECT id,source,created FROM shader ORDER by id DESC')
-    return { 'shaders': cursor.fetchall() }
+    cursor.execute('SELECT COUNT(*) FROM shader')
+    total_shaders = cursor.fetchone()[0]
+    total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id,source,created FROM shader ORDER by id DESC LIMIT ?, ?', (items_per_page * (page - 1), items_per_page))
+    return { 'shaders': cursor.fetchall(), 'page': page, 'total_pages': total_pages }
 
 @bottle.route('/edit')
 @bottle.route('/edit/<shader_id:int>')
