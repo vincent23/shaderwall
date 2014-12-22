@@ -114,8 +114,9 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 
 Shaderwall.prototype.draw = function(time) {
 	var gl = this.gl;
+	var canvas = this.canvas;
 	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
-	gl.uniform2f(this.glState.resolutionUniform, 640, 480);
+	gl.uniform2f(this.glState.resolutionUniform, canvas.width, canvas.height);
 	gl.uniform1f(this.glState.timeUniform, time / 1000);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	window.requestAnimationFrame(this.draw.bind(this));
