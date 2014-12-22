@@ -5,16 +5,12 @@ import random
 import string
 import json
 
+app = application = bottle.Bottle()
+
 bottle.BaseRequest.MEMFILE_MAX = 1024 * 1024 # 1MB
 
-def main():
-    global conn
-    conn = sql.connect('shaderwall.db')
-    setup_db()
-    bottle.run(host='localhost', port=8080, debug=True)
-
-@bottle.route('/')
-@bottle.route('/gallery/<page:int>')
+@app.route('/')
+@app.route('/gallery/<page:int>')
 @bottle.view('static/gallery.html')
 def get_gallery(page=1):
     items_per_page = 16
@@ -26,8 +22,8 @@ def get_gallery(page=1):
     cursor.execute('SELECT id,source,created FROM shader ORDER by id DESC LIMIT ?, ?', (items_per_page * (page - 1), items_per_page))
     return { 'shaders': cursor.fetchall(), 'page': page, 'total_pages': total_pages }
 
-@bottle.route('/edit')
-@bottle.route('/edit/<shader_id:int>')
+@app.route('/edit')
+@app.route('/edit/<shader_id:int>')
 @bottle.view('static/editor.html')
 def get_gallery(shader_id=None):
     if shader_id:
@@ -54,11 +50,11 @@ def get_gallery(shader_id=None):
     else:
         return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': ''}
 
-@bottle.route('/lib/<path:path>')
+@app.route('/lib/<path:path>')
 def get_static(path):
     return bottle.static_file(path, root='./static/lib')
 
-@bottle.route('/screenshots/<path:path>')
+@app.route('/screenshots/<path:path>')
 def get_screenshot(path):
     return bottle.static_file(path, root='./uploads', mimetype='image/png')
 
@@ -78,7 +74,7 @@ def save_screenshot(shader_id, screenshot):
     except:
         return False
 
-@bottle.post('/shaders')
+@app.post('/shaders')
 def create_shader():
     source = bottle.request.params.getunicode('source')
     screenshot = bottle.request.params.getunicode('screenshot')
@@ -94,7 +90,7 @@ def create_shader():
 
     return json.dumps({'id': new_shader_id, 'authcode': new_authcode, 'redirect': True})
 
-@bottle.get('/shaders/<shader_id:int>')
+@app.get('/shaders/<shader_id:int>')
 def get_shader(shader_id):
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM shader WHERE id = ?', (shader_id,))
@@ -104,7 +100,7 @@ def get_shader(shader_id):
     else:
         bottle.abort(404, 'Shader not found')
 
-@bottle.post('/shaders/<shader_id:int>')
+@app.post('/shaders/<shader_id:int>')
 def edit_shader(shader_id):
     source = bottle.request.params.getunicode('source')
     authcode = bottle.request.params.getunicode('authcode')
@@ -130,4 +126,19 @@ def setup_db():
                       )''')
     conn.commit()
 
-main()
+global conn
+conn = sql.connect('shaderwall.db')
+setup_db()
+
+class StripPathMiddleware(object):
+    '''
+    Get that slash out of the request
+    '''
+    def __init__(self, a):
+        self.a = a
+    def __call__(self, e, h):
+        e['PATH_INFO'] = e['PATH_INFO'].rstrip('/')
+        return self.a(e, h)
+
+if __name__ == '__main__':
+    bottle.run(app=StripPathMiddleware(app), host='localhost', port=8080, debug=True)
