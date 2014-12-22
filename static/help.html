@@ -75,6 +75,31 @@ void main(void)
 				<h2>Basic GLSL</h2>
 				<div id="data">
 					<h3>Data types</h3>
+					<p>
+					Aside from the usual <code>float</code> and <code>int</code> types, GLSL also has some more advanced data types for vectors and matrices.
+					<p>
+					There are vectors of up to four dimensions called <code>vec2</code>, <code>vec3</code> and <code>vec4</code>.
+					To construct a new vector just use the matching function: <code>vec3(1.0, 0.0, 1.0)</code>.
+					You can also create a vector by supplying only one value for all components: <code>vec3(1.0)</code>.
+					Another way of constructing vectors is by using smaller vectors: <code>vec3(some_vec2, 1.0)</code>.
+					This will use the first two components of <code>some_vec2</code> as the first two components of the resulting <code>vec3</code> and the <code>1.0</code> as the third component.
+					</p>
+					<p>
+					You can do arithmetic on vectors just like on numbers.
+					Most operations like <code>+</code>, <code>*</code>, <code>/</code>, … just work component-wise.
+					You can also do scalar-vector operations, e.g. multiply a <code>vec4</code> by a <code>float</code> value.
+					Additionally, there are some functions defined on vectors, like <code>length(v)</code>, <code>normalize(v)</code>, <code>dot(a, b)</code> and <code>cross(a, b)</code>.
+					</p>
+					<p>
+					The elements of a vector can be accessed in several different ways.
+					First of all, there is array syntax: <code>v[2]</code>.
+					This will return the third component of the vector <code>v</code> (indexes start at zero).
+					Alternatively, the following syntax will do the same thing: <code>v.z</code>.
+					There are several ways of naming the components of a vector: <code>xyzw</code>, <code>rgba</code> and <code>stpq</code>.
+					</p>
+					<p>
+					Maybe some matrix stuff… TODO
+					</p>
 				</div>
 				<div id="swizzling">
 					<h3>Swizzling</h3>
