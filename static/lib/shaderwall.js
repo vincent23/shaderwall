@@ -20,6 +20,11 @@ var Shaderwall = function() {
 	});
 
 	this.canvas = document.getElementById("glcanvas");
+	if(!edit_mode) {
+		$('.CodeMirror')[0].style.display = 'none';
+		this.canvas.style.top = "0px";
+		this.canvas.style.height = "100%";
+	}
 	this.gl = this.initGL(this.canvas);
 
 	this.glState = {

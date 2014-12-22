@@ -9,6 +9,13 @@
 
 		<title>{{get('title', 'Le Shaderwall')}}</title>
 
+		<script type="text/javascript">
+		% if get('edit_mode'):
+			var edit_mode = 1;
+		% else:
+			var edit_mode = 0;
+		% end
+		</script>
 		<link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<link href="/lib/codemirror/lib/codemirror.css" rel="stylesheet">
 		<link href="/lib/codemirror/addon/lint/lint.css" rel="stylesheet">
@@ -17,6 +24,7 @@
 		<link href="/lib/codemirror/theme/zenburn.css" rel="stylesheet">
 	</head>
 	<body>
+		% if get('edit_mode'):
 		<nav class="navbar navbar-default navbar-static-top" role="navigation">
 			<div class="container">
 				<div class="navbar-header">
@@ -40,7 +48,6 @@
 							<li {{! 'class="active"' if get('active', '') == link else ''}}><a href="/{{ link }}">{{ label }}</a></li>
 						% end
 					</ul>
-					% if get('edit_mode'):
 					<div class="navbar-right navbar-form">
 						<select class="form-control" id="mode-selector">
 							<option value="notepad">Notepad</option>
@@ -50,18 +57,17 @@
 						</select>
 						<button type="submit" class="btn btn-primary" id="save-button">{{ save_button_text }}</button>
 					</div>
-					% end
 				</div>
 
 			</div>
 		</nav>
+		% end
 
 		{{!base}}
 
 		<script src="/lib/jquery.min.js"></script>
 		<script src="/lib/bootstrap/js/bootstrap.min.js"></script>
 
-		% if get('edit_mode'):
 		<script src="/lib/codemirror/lib/codemirror.js"></script>
 		<script src="/lib/codemirror/addon/lint/lint.js"></script>
 		<script src="/lib/codemirror/addon/hint/show-hint.js"></script>
@@ -72,6 +78,5 @@
 		<script src="/lib/codemirror/mode/glsl.js"></script>
 		<script src="/lib/raf.js"></script>
 		<script src="/lib/shaderwall.js"></script>
-		% end
 	</body>
 </html>

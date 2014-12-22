@@ -22,6 +22,27 @@ def get_gallery(page=1):
     cursor.execute('SELECT id,source,created FROM shader ORDER by id DESC LIMIT ?, ?', (items_per_page * (page - 1), items_per_page))
     return { 'shaders': cursor.fetchall(), 'page': page, 'total_pages': total_pages }
 
+@app.route('/wall')
+@app.route('/wall/<shader_id:int>')
+@bottle.view('static/wall.html')
+def get_gallery(shader_id=None):
+    if shader_id:
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, source FROM shader WHERE id = ?', (shader_id,))
+        result = cursor.fetchone()
+        if result:
+            return {
+                'shader_id': result[0],
+                'shader_source': result[1],
+                'save_button_text': '',
+                'save_url': '',
+                'authcode': '',
+            }
+        else:
+            return {'save_url': '', 'save_button_text': '', 'authcode': ''}
+    else:
+        return {'save_url': '', 'save_button_text': '', 'authcode': ''}
+
 @app.route('/edit')
 @app.route('/edit/<shader_id:int>')
 @bottle.view('static/editor.html')

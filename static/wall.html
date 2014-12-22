@@ -1,0 +1,19 @@
+% rebase('static/base.html', edit_mode=False, active='edit')
+<div class="container-fluid">
+	<canvas id="glcanvas" width="640" height="480">
+		Kein canvas :(
+	</canvas>
+</div>
+% import json
+<script>
+% if defined('shader_id'):
+    var shaderId = {{ shader_id }};
+    var shaderSource = {{! json.dumps(shader_source) }};
+% else:
+    var shaderId = -1;
+    var shaderSource = "#ifdef GL_ES\nprecision mediump float;\n#endif\nuniform float time;\nuniform vec2 resolution;\nvoid main(void)\n{\n\tgl_FragColor = vec4(0.1, 0.1, 0.2, 1.0);\n}\n";
+% end
+		var save_url = '{{ save_url }}';
+		var save_button_text = '{{ save_button_text }}';
+		var authcode = '{{ authcode }}';
+</script>
