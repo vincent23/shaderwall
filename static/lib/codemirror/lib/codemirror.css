@@ -6,9 +6,10 @@ div.CodeMirror {
 	background-color: transparent;
 	position: absolute;
 
-	/*height: 98%;*/
-	width: 98%;
-	left: 0px; top: 50px;
+	top: 50px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
 	padding: 12px;
 	margin: 1%;
 	-moz-box-sizing: border-box;

@@ -14,7 +14,9 @@ var Shaderwall = function() {
 		indentUnit: 4,
 		lineWrapping: true,
 		gutters: ["CodeMirror-lint-markers"],
-		lint: true
+		lint: true,
+		scrollbarStyle: "null",
+		theme: "zenburn",
 	});
 
 	this.canvas = document.getElementById("glcanvas");
