@@ -139,5 +139,22 @@ $(document).ready(function() {
 			}
 		}, "json");
 	});
+
+	$('#mode-selector').change(function() {
+		var val = $('#mode-selector').val();
+		var editor = shaderwall.editor;
+		if (val === 'notepad') {
+			editor.setOption('keyMap', 'default');
+			editor.setOption('vimMode', false);
+		} else if (val === 'vim') {
+			editor.setOption('vimMode', true);
+		} else if (val === 'emacs') {
+			editor.setOption('keyMap', 'emacs');
+			editor.setOption('vimMode', false);
+		} else if (val === 'sublime') {
+			editor.setOption('keyMap', 'sublime');
+			editor.setOption('vimMode', false);
+		}
+	});
 });
 
