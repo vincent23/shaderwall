@@ -30,8 +30,16 @@ var Shaderwall = function() {
 
 	this.updateSize();
 	this.reloadShaders(this.editor.getValue());
-	this.editor.on("change", (function() {
-		this.reloadShaders(this.editor.getValue());
+	var compileTimer = null;
+	this.editor.on("change", (function(editor, changes, source) {
+		if (source === this) {
+			return;
+		}
+		clearTimeout(compileTimer);
+		compileTimer = setTimeout((function() {
+			this.reloadShaders(this.editor.getValue());
+			CodeMirror.signal(this.editor, 'change', this.editor, {}, this);
+		}).bind(this), 200);
 	}).bind(this));
 	this.draw(0.0);
 };
