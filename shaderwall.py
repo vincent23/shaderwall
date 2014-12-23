@@ -29,9 +29,10 @@ def wat_wall():
     datfile.close()
     return json.dumps({'id': datid})
 
+@app.route('/wall')
 @app.route('/wall/<shader_id:int>')
 @bottle.view('static/wall.html')
-def get_wall(shader_id):
+def get_wall(shader_id=None):
     if shader_id:
         cursor = conn.cursor()
         cursor.execute('SELECT id, source FROM shader WHERE id = ?', (shader_id,))
