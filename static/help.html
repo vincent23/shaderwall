@@ -14,7 +14,7 @@
 					<p>
 					A shader is just a program running on your graphics card, which enables it to run very fast (depending on your hardware).
 					There are many different kinds of shaders, but that isn't really important for our purposes at the moment.
-					Everything you're going to write on shaderwall is called a <b>fragment shader</b>.
+					Everything you're going to write on shaderwall is called a <em>fragment shader</em>.
 					</p>
 					<p>
 					Fragment shaders, also known as pixel shaders, are (in short) executed for every pixel of the output, so we're just going to write a small program that calculates a color for that pixel.
@@ -40,9 +40,16 @@ uniform vec2 resolution;
 // main function for our shader
 void main(void)
 {
+	// calculate the current pixel position
+	// it's in the [0, 1] range, starting bottom left
 	vec2 position = gl_FragCoord.xy / resolution;
-	// write output color
-	gl_FragColor = vec4(position, sin(time) * 0.5 + 0.5, 1.0);
+
+	// calculate output color
+	// colors are represented in the [0, 1] range
+	vec3 color = vec3(position.xy, sin(time) * 0.5 + 0.5);
+
+	// write output color in rgba format
+	gl_FragColor = vec4(color.rgb, 1.0);
 }</pre>
 					<p>
 					So as you can see, it pretty much looks like C (or any language using C syntax).
@@ -54,16 +61,25 @@ void main(void)
 					Next, the main function is declared, which is the entry point for your shader.
 					In this function, we divide a special value <code>gl_FragCoord.xy</code> by the resolution.
 					Variables prefixed with <code>gl_</code> are special variables set by OpenGL, in this case it contains the respective pixel position.
-					For now, just ignore the <code>.xy</code> part, it's a nice little thing called <b>swizzling</b> and will be covered later.
+					For now, just ignore the <code>.xy</code> part, it's a nice little thing called <em>swizzling</em> and will be covered later.
 					So by dividing these two values, we get a two-dimensional vector with values between 0 and 1.
+					</p>
+					<p>
+					Now, we calculate the color to be displayed. It will be a three dimesional vector, for the colors red, green and blue.
+					The colors in OpenGl are represented as floats in a <code>[0, 1]</code> range, not as integers between 0 and 255. As you will find out when writing your first shaders that's a lot more convenient (also you graphics card loves floats!).
+					The color gets set to a <code>vec3</code> consisting of <code>position.xy</code> and some calculations with <code>sin(time)</code>.
+					Because <code>position</code> is a two-dimensional vector, it is assigned to the first two components of the output color.
+					So red gets the value of the current x coordinate and green the one of the y coordinate.
+					To the remaining blue component we assign <code>sin(time) * 0.5 + 0.5</code>, which is just a sine applied to the <code>time</code> input with some rescaling to stay in the <code>[0, 1]</code> range.
 					</p>
 					<p>
 					At last, we're assigning a value to <code>gl_FragColor</code>, which is another special variable for our output color.
 					It's a four-dimensional vector, but we only care about the first three components.
 					These are the three color channels for red, green and blue.
-					Because <code>position</code> is a two-dimensional vector, it is assigned to the first two components of the output color.
-					To the remaining blue component we assign <code>sin(time) * 0.5 + 0.5</code>, which is just a sine applied to the <code>time</code> input with some rescaling to stay in the <code>[0, 1]</code> range.
+					Because <code>color</code> is a three-dimensional vector, it is assigned to the first three components of the fragment color.
+					To the remaining forth component, the alpha channel, we assign just <code>1.0</code>, which is needed to assure the color is fully opaque.
 					</p>
+
 					<p>
 					So just copy and paste the code into the shaderwall editor and look at the result.
 					It should give you some gradient with a changing amount of blue color.
