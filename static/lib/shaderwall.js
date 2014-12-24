@@ -1,5 +1,6 @@
 var Shaderwall = function() {
 	this.errors = [];
+	this.time = 0;
 
 	CodeMirror.registerHelper("lint", "glsl", function(text) {
 		return this.errors;
@@ -125,6 +126,7 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 };
 
 Shaderwall.prototype.draw = function(time) {
+	this.time = time;
 	var gl = this.gl;
 	var canvas = this.canvas;
 	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
@@ -145,17 +147,39 @@ Shaderwall.prototype.updateSize = function() {
 	}
 };
 
+Shaderwall.prototype.screenshot = function() {
+	var screenshot_width = 400;
+	var screenshot_height = 300;
+	var screenshot_scale = 2;
+
+	var gl = this.gl;
+	var canvas = this.canvas;
+	var oldheight = canvas.height;
+	var oldwidth = canvas.width;
+	canvas.height = screenshot_height * screenshot_scale;
+	canvas.width = screenshot_width * screenshot_scale;
+	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
+	gl.uniform2f(this.glState.resolutionUniform, screenshot_width * screenshot_scale, screenshot_height * screenshot_scale);
+	gl.uniform1f(this.glState.timeUniform, this.time / 1000);
+	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+	var dummycanvas = document.createElement("canvas");
+	dummycanvas.height = screenshot_height;
+	dummycanvas.width = screenshot_width;
+	var dummycontext = dummycanvas.getContext("2d");
+	dummycontext.drawImage(canvas, 0, 0, dummycanvas.width, dummycanvas.height)
+
+	var screenshot = dummycanvas.toDataURL("image/png");
+	canvas.height = oldheight;
+	canvas.width = oldwidth;
+	return screenshot
+}
+
 $(document).ready(function() {
 	var shaderwall = new Shaderwall();
 	$('#save-button').click(function () {
 		var source = shaderwall.editor.getValue();
-		var canvas = document.getElementById("glcanvas");
-		var dummycanvas = document.createElement("canvas");
-		dummycanvas.height = 300;
-		dummycanvas.width = 400;
-		var dummycontext = dummycanvas.getContext("2d");
-		dummycontext.drawImage(canvas, 0, 0, dummycanvas.width, dummycanvas.height)
-		var screenshot = dummycanvas.toDataURL("image/png");
+		var screenshot = shaderwall.screenshot();
 
 		$.post(save_url, { 'source': source, 'screenshot': screenshot, 'authcode': authcode, },function(data) {
 			console.log(data);
