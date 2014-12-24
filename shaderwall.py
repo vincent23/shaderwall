@@ -11,6 +11,10 @@ screenshot_size = (400, 300)
 app = application = bottle.Bottle()
 bottle.BaseRequest.MEMFILE_MAX = 1024 * 1024 # 1MB
 
+default_shader_source_file = open("default.shader", "r")
+default_shader_source = default_shader_source_file.read()
+default_shader_source_file.close()
+
 @app.route('/')
 @app.route('/gallery/<page:int>')
 @bottle.view('static/gallery.html')
@@ -72,9 +76,9 @@ def get_gallery(shader_id=None):
                 'screenshot_size': screenshot_size,
             }
         except:
-            return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size}
+            return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size, 'shader_source': default_shader_source}
     else:
-        return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size}
+        return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size, 'shader_source': default_shader_source}
 
 @app.route('/help')
 @bottle.view('static/help.html')

@@ -8,9 +8,12 @@
 <script>
 % if defined('shader_id'):
     var shaderId = {{ shader_id }};
-    var shaderSource = {{! json.dumps(shader_source) }};
 % else:
     var shaderId = -1;
+% end
+% if defined('shader_source'):
+    var shaderSource = {{! json.dumps(shader_source) }};
+% else:
     var shaderSource = "#ifdef GL_ES\nprecision mediump float;\n#endif\nuniform float time;\nuniform vec2 resolution;\nvoid main(void)\n{\n\tgl_FragColor = vec4(0.1, 0.1, 0.2, 1.0);\n}\n";
 % end
 		var save_url = '{{ save_url }}';
