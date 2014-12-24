@@ -1,2 +1,8 @@
-shaderwall.db
+.venv
+*.pyc
+
+config.py
 uploads
+
+*.db
+watid

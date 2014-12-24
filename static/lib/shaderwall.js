@@ -148,8 +148,6 @@ Shaderwall.prototype.updateSize = function() {
 };
 
 Shaderwall.prototype.screenshot = function() {
-	var screenshot_width = 400;
-	var screenshot_height = 300;
 	var screenshot_scale = 2;
 
 	var gl = this.gl;

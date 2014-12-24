@@ -1,0 +1,5 @@
+# for sqlite:
+connection_url = "sqlite:///shaderwall.db"
+
+# for mysql:
+# connection_url = "mysql://shaderwall:ultrasecretpassword@localhost/shaderwall?charset=utf8"
