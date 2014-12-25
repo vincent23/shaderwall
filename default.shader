@@ -75,16 +75,20 @@ float is_circle(vec2 position) {
 
 // Check for beam intensity
 float is_beam_shadow(vec2 position) {
+    float scalefix = resolution.y / SCALE / 16.0;
+
     position.y -= 2.5 * BLOCK_OFFSET + SCALE / resolution.y;
     float edge0 = 0.9;
     float edge1 = 1.0;
-    float x = 1.0 - abs(position.x/6.0) - abs(position.y*5.0);
+    float x = 1.0 - abs(position.x/6.0)*scalefix - abs(position.y*5.0)*scalefix;
     x = fadein(x,0.0,1.0);
     return smoothstep(edge0, edge1, x);
 }
 
 // Check for beam
 float is_beam(vec2 position) {
+    float scalefix = resolution.y / SCALE / 16.0;
+
     position.y -= 2.5 * BLOCK_OFFSET + SCALE / resolution.y;
     float edge0;
     float edge1;
@@ -92,14 +96,14 @@ float is_beam(vec2 position) {
 
     edge0 = 0.0;
     edge1 = 1.0;
-    x = 1.0 - pow(abs(position.x), 2.0)*220.0 - abs(position.y*34.0);
+    x = 1.0 - pow(abs(position.x), 2.0)*220.0*scalefix - abs(position.y*34.0*scalefix);
     x = x * 2.0;
     x = pulse(x,1.0,0.8);
     float beam_part1 = smoothstep(edge0, edge1, x);
 
     edge0 = 0.4;
     edge1 = 0.7;
-    x = 1.0 - abs(position.x/1.0) - abs(position.y*256.0);
+    x = 1.0 - abs(position.x/1.0)*scalefix - abs(position.y*256.0*scalefix);
     x = fadein(x,1.5,0.8);
     float beam_part2 = smoothstep(edge0, edge1, x);
 
@@ -145,6 +149,7 @@ void main(void) {
 
     gl_FragColor = vec4( BACKGROUND_BASE , 1.);
 }
+
 
 
 
