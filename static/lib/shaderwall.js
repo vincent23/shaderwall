@@ -198,6 +198,21 @@ $(document).ready(function() {
 		}, "json");
 	});
 
+	var hidden = false;
+	var codeMirrorDisplay = $('.CodeMirror')[0].style.display;
+	$('#hide-button').click(function(e) {
+		hidden = !hidden;
+		if (hidden) {
+			$(e.target).html("Show code");
+			$(e.target).addClass("active");
+			$('.CodeMirror')[0].style.display = 'none';
+		} else {
+			$(e.target).html("Hide code");
+			$(e.target).removeClass("active");
+			$('.CodeMirror')[0].style.display = codeMirrorDisplay;
+		}
+	});
+
 	$('#mode-selector').change(function() {
 		var val = $('#mode-selector').val();
 		var editor = shaderwall.editor;

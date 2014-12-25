@@ -51,13 +51,14 @@
 					</ul>
 					% if get('edit_mode'):
 					<div class="navbar-right navbar-form">
+						<button type="button" class="btn btn-default" id="hide-button">Hide code</button>
 						<select class="form-control" id="mode-selector">
 							<option value="notepad">Notepad</option>
 							<option value="vim">Vim</option>
 							<option value="emacs">Emacs</option>
 							<option value="sublime">Sublime</option>
 						</select>
-						<button type="submit" class="btn btn-primary" id="save-button">{{ save_button_text }}</button>
+						<button type="button" class="btn btn-primary" id="save-button">{{ save_button_text }}</button>
 					</div>
 					% end
 				</div>
