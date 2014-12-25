@@ -21,8 +21,11 @@ class Shader(Base):
     views = Column(Integer, default=0)
 
 def setup_db():
+    global engine
     engine = create_engine(connection_url)
     Base.metadata.create_all(engine)
+
+def db_session():
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
     return session

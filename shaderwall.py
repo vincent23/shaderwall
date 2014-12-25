@@ -3,7 +3,7 @@ import base64
 import json
 import time
 import datetime
-from database import Shader, setup_db
+from database import Shader, setup_db, db_session
 from PIL import Image
 
 screenshot_size = (400, 300)
@@ -19,10 +19,12 @@ default_shader_source_file.close()
 @app.route('/gallery/<page:int>')
 @bottle.view('static/gallery.html')
 def get_gallery(page=1):
+    session = db_session()
     items_per_page = 16
     total_shaders = session.query(Shader).count()
     total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
     shaders = session.query(Shader).order_by(Shader.id.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
+    session.close()
     return { 'shaders': shaders, 'page': page, 'total_pages': total_pages }
 
 @app.route('/wall/wat')
@@ -38,7 +40,9 @@ def wat_wall():
 def get_wall(shader_id=None):
     if shader_id:
         try:
+            session = db_session()
             shader = session.query(Shader).filter(Shader.id == shader_id).one()
+            session.close()
             return {
                 'shader_id': shader.id,
                 'shader_source': shader.source,
@@ -58,6 +62,7 @@ def get_gallery(shader_id=None):
     if shader_id:
         authcode = bottle.request.params.getunicode('authcode')
         try:
+            session = db_session()
             shader = session.query(Shader).filter(Shader.id == shader_id).one()
             shader.views += 1
             session.commit()
@@ -67,6 +72,7 @@ def get_gallery(shader_id=None):
             else:
                 save_button_text = 'Fork'
                 save_url = '/shaders'
+            session.close()
             return {
                 'shader_id': shader.id,
                 'shader_source': shader.source,
@@ -123,14 +129,17 @@ def create_shader():
     source = bottle.request.params.getunicode('source')
     screenshot = bottle.request.params.getunicode('screenshot')
 
+    session = db_session()
     shader = Shader(source=source)
     session.add(shader)
     session.commit()
     if not save_screenshot(shader.id, screenshot):
         shader.delete()
         session.commit()
+        session.close()
         return bottle.abort(500, "Internal Server Error")
 
+    session.close()
     return json.dumps({'id': shader.id, 'authcode': shader.authcode, 'redirect': True})
 
 @app.post('/shaders/<shader_id:int>')
@@ -138,25 +147,35 @@ def edit_shader(shader_id):
     source = bottle.request.params.getunicode('source')
     authcode = bottle.request.params.getunicode('authcode')
     screenshot = bottle.request.params.getunicode('screenshot')
+    session = db_session()
     try:
-        shader = session.query(Shader).filter(Shader.id == shader_id).one()
+        shader = session.query(Shader).filter(Shader.id == shader_id)
+        if shader.count():
+            shader = shader.one()
+        else:
+            session.close()
+            raise('Shader not found')
+        if not shader.authcode == authcode:
+            session.close()
+            return bottle.abort(403, 'Forbidden')
     except:
+        session.close()
         return bottle.abort(404, 'Not found')
-    if not shader.authcode == authcode:
-        return bottle.abort(403, 'Forbidden')
+
     try:
         shader.source = source
         shader.updated = datetime.datetime.now()
         session.commit()
+        session.close()
     except:
-        bottle.abort(500, 'Update failed')
+        return bottle.abort(500, 'Internal Server Error')
 
     if not save_screenshot(shader_id, screenshot):
         print("yo?")
 
-    return json.dumps({'id': shader.id, 'authcode': shader.authcode, 'redirect': False})
+    return json.dumps({'id': shader_id, 'authcode': authcode, 'redirect': False})
 
-session = setup_db()
+setup_db()
 
 class StripPathMiddleware(object):
     '''
