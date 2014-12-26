@@ -234,14 +234,10 @@ void main() {
 				<div id="clamp">
 					<h3>Clamp</h3>
 					<p>
-					<code>clamp</code> can be used to limit a value to a specific range.
+					<code>clamp(x, minVal, maxVal)</code> can be used to limit a value to a specific range.
+					It is equivalent to <code>min(max(x, minVal), maxVal)</code>.
 					</p>
-				</div>
-				<div id="mod">
-					<h3>Mod</h3>
-					<p>
-
-					</p>
+					<img src="/lib/img/clamp.png" />
 				</div>
 				<div id="other">
 					<h3>Other functions</h3>
@@ -250,7 +246,8 @@ void main() {
 						<li><code>min(a, b)</code> and <code>max(a, b)</code></li>
 						<li><code>abs(x)</code></li>
 						<li><code>floor(x)</code>, <code>ceil(x)</code>, <code>truncate(x)</code></li>
-						<li><code>exp(x)</code>, <code>pow(a, b)</code>
+						<li><code>exp(x)</code>, <code>pow(a, b)</code></li>
+						<li><code>mod(a, b)</code></li>
 					</ul>
 				</div>
 			</section>
@@ -294,7 +291,6 @@ void main() {
 						<li><a href="#step">Step</a></li>
 						<li><a href="#smoothstep">Smoothstep</a></li>
 						<li><a href="#clamp">Clamp</a></li>
-						<li><a href="#mod">Mod</a></li>
 						<li><a href="#other">Other functions</a></li>
 					</ul>
 				</li>
