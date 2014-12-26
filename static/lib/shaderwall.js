@@ -194,9 +194,9 @@ $(document).ready(function() {
 					document.getElementById('save-button').innerHTML = save_button_text;
 				}, 2000);
 			}else{
-				alert(data);
+				alert("An error occured. Please try again later.");
 			}
-		}, "json");
+		}, "json").fail(function() { alert( "An error occured. Please try again later." ); });
 	});
 
 	var hidden = false;
