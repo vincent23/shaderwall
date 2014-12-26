@@ -1,6 +1,7 @@
 var Shaderwall = function() {
 	this.errors = [];
 	this.time = 0;
+	this.quality = 1;
 
 	CodeMirror.registerHelper("lint", "glsl", function(text) {
 		return this.errors;
@@ -140,11 +141,11 @@ Shaderwall.prototype.updateSize = function() {
 	var canvas = this.canvas;
 	var newWidth = document.documentElement.clientWidth;
 	var newHeight = document.documentElement.clientHeight - 50 /*height of navbar*/;
-	if (canvas.width != newWidth || canvas.height != newHeight) {
-		canvas.width = newWidth;
-		canvas.height = newHeight;
-		this.gl.viewport(0, 0, newWidth, newHeight);
-	}
+	canvas.width = newWidth / this.quality;
+	canvas.height = newHeight / this.quality;
+	this.gl.viewport(0, 0, canvas.width, canvas.height);
+	canvas.style.width = newWidth + 'px';
+	canvas.style.height = newHeight + 'px';
 };
 
 Shaderwall.prototype.screenshot = function() {
@@ -213,8 +214,8 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#mode-selector').change(function() {
-		var val = $('#mode-selector').val();
+	$('#mode-selector').change(function(e) {
+		var val = $(e.target).val();
 		var editor = shaderwall.editor;
 		if (val === 'notepad') {
 			editor.setOption('keyMap', 'default');
@@ -228,6 +229,11 @@ $(document).ready(function() {
 			editor.setOption('keyMap', 'sublime');
 			editor.setOption('vimMode', false);
 		}
+	});
+
+	$('#quality-selector').change(function(e) {
+		shaderwall.quality = $(e.target).val();
+		shaderwall.updateSize();
 	});
 
 	// register a callback function for window resizes
