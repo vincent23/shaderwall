@@ -17,14 +17,14 @@
 					Everything you're going to write on shaderwall is called a <em>fragment shader</em>.
 					</p>
 					<p>
-					Fragment shaders, also known as pixel shaders, are (in short) executed for every pixel of the output, so we're just going to write a small program that calculates a color for that pixel.
+					Fragment shaders, also known as pixel shaders, are (in short) executed for every pixel of the output, so we're just going to write a small program that calculates a color for each pixel.
 					To make it look interesting the color should of course depend on the pixel's position and maybe also on time.
 					</p>
 				</div>
 				<div id="firstshader">
 					<h3>My first fragment shader</h3>
 					<p>
-					Shaders are written in a programming language called GLSL, which is a bit like C, except it has no pointers but some nice other builtin data types and functions.
+					Shaders are written in a programming language called GLSL, which is a bit like C, except it has no pointers but some nice other built-in data types and functions.
 					Let's write a quick 'Hello World'-style shader!
 					By the way: you can try out all the examples by just pasting them in the shaderwall editor.
 					</p>
@@ -66,7 +66,8 @@ void main(void)
 					</p>
 					<p>
 					Now, we calculate the color to be displayed. It will be a three dimesional vector, for the colors red, green and blue.
-					The colors in OpenGl are represented as floats in a <code>[0, 1]</code> range, not as integers between 0 and 255. As you will find out when writing your first shaders that's a lot more convenient (also you graphics card loves floats!).
+					Colors in OpenGL are represented as floats in the <code>[0, 1]</code> range, not as integers between 0 and 255.
+					As you will find out when writing your first shaders that's a lot more convenient (also you graphics card loves floats!).
 					The color gets set to a <code>vec3</code> consisting of <code>position.xy</code> and some calculations with <code>sin(time)</code>.
 					Because <code>position</code> is a two-dimensional vector, it is assigned to the first two components of the output color.
 					So red gets the value of the current x coordinate and green the one of the y coordinate.
@@ -113,6 +114,10 @@ void main(void)
 					Alternatively, the following syntax will do the same thing: <code>v.z</code>.
 					There are several ways of naming the components of a vector: <code>xyzw</code>, <code>rgba</code> and <code>stpq</code>.
 					</p>
+					<p>
+					Matrices will not be covered, but are also very simple to use.
+					The most important part to remember is that matrices are column-major and how to do a rotation.
+					</p>
 				</div>
 				<div id="swizzling">
 					<h3>Swizzling</h3>
@@ -137,7 +142,7 @@ float l = length(v.yxw); // in every context</pre>
 				<div id="control">
 					<h3>Control structures</h3>
 					<p>
-					You can have <code>while</code> and <code>for</code> loops and <code>if-else</code>-statements like in C, so they aren't very interesting.
+					You can have <code>while</code> and <code>for</code> loops and <code>if-else</code>-statements like in C (and most other languages), so they aren't very interesting.
 					</p>
 					<pre>// some stupid loops
 float foo = 1.0;
@@ -195,7 +200,7 @@ void main() {
 					</p>
 					<img src="/lib/img/mix.png" />
 					<p>
-					<code>mix</code> can also be used on vectors, of course, with the third argment being either a vector or a scalar.
+					<code>mix</code> can also be used on vectors, of course, with the third argument being either a vector or a scalar.
 					Because linear interpolation is such a common operation in computer graphics, this is often of use.
 					There are geometric applications, like if you like to describe a line through two points, but you can also use it to combine colors and nearly everything you could think of.
 					</p>
@@ -208,7 +213,7 @@ void main() {
 				<div id="step">
 					<h3>Step</h3>
 					<p>
-					<code>step(edge, x)</code> is a simple function which has value <em>0</em> when <code>edge < x</code> and is <em>1</em> otherwise.
+					<code>step(edge, x)</code> is a simple function which has value 0 when <code>edge < x</code> and is 1 otherwise.
 					It is often simpler to mulitply with step than to use an explicit <code>if</code>.
 					You can think of <code>step</code> as a comparison operation with a implicit cast to float (if your mind works very C-ish).
 					</p>
@@ -218,12 +223,12 @@ void main() {
 					<h3>Smoothstep</h3>
 					<p>
 					<code>smoothstep(edge0, edge1, x)</code> works like <code>step</code>, except it takes two edge arguments.
-					For <code>x</code> elow <code>edge0</code> and above <code>edge1</code> it is <em>0</em> and <em>1</em>, respectively.
-					The interesting part is between those two values, where the function interpolates smoothly between <em>0</em> and <em>1</em>.
+					For <code>x</code> below <code>edge0</code> and above <code>edge1</code> it is 0 and 1, respectively.
+					The interesting part is between those two values, where the function interpolates smoothly between 0 and 1.
 					</p>
 					<img src="/lib/img/smoothstep.png" />
 					<p>
-					So <code>smoothstep</code> can be used as a differentiable alternative to <code>step</code>, which is useful sometimes but usually just looks better almost always.
+					So <code>smoothstep</code> can be used as a differentiable alternative to <code>step</code>, which is sometimes useful, but usually it just looks better.
 					</p>
 				</div>
 				<div id="clamp">
