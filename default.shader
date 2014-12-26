@@ -4,6 +4,16 @@ precision mediump float;
 uniform float time;
 uniform vec2 resolution;
 
+/*
+ *  Hello, human!
+ *  This is an example shader for shaderwall,
+ *  a glsl sandbox with projections at the nerd2nerd assembly on 31c3.
+ *  Come visit us, or just have fun writing glsl shaders!
+ *
+ *  Shader by lukas2511
+ *  Original 31c3 logo by Sven (graphorama.de)
+ */
+
 // Colors
 vec3 BACKGROUND_BASE = vec3(0.0, 0.0, 0.0);
 vec3 CIRCLE = vec3(1.0, 1.0, 1.0);
