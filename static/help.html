@@ -113,9 +113,6 @@ void main(void)
 					Alternatively, the following syntax will do the same thing: <code>v.z</code>.
 					There are several ways of naming the components of a vector: <code>xyzw</code>, <code>rgba</code> and <code>stpq</code>.
 					</p>
-					<p>
-					Maybe some matrix stuff… TODO
-					</p>
 				</div>
 				<div id="swizzling">
 					<h3>Swizzling</h3>
@@ -192,16 +189,75 @@ void main() {
 				<h2>Useful functions</h2>
 				<div id="mix">
 					<h3>Mix</h3>
+					<p>
+					<code>mix(a, b, t)</code> provides linear interpolation, i.e. it is equivalent to <code>a * t + b * (t - 1.0)</code>.
+					This can better be visualized by connecting two points with a straigt line like this.
+					</p>
 					<img src="/lib/img/mix.png" />
+					<p>
+					<code>mix</code> can also be used on vectors, of course, with the third argment being either a vector or a scalar.
+					Because linear interpolation is such a common operation in computer graphics, this is often of use.
+					There are geometric applications, like if you like to describe a line through two points, but you can also use it to combine colors and nearly everything you could think of.
+					</p>
+					<p>
+					Another common thing is to plug in another function into the third argument for shaping the control parameter.
+					This is great if you'd like to avoid for your interpolation to look too linear.
+					Try different functions, like <code>pow</code>, <code>exp</code> or <code>smoothstep</code>.
+					</p>
 				</div>
 				<div id="step">
 					<h3>Step</h3>
+					<p>
+					<code>step(edge, x)</code> is a simple function which has value <em>0</em> when <code>edge < x</code> and is <em>1</em> otherwise.
+					It is often simpler to mulitply with step than to use an explicit <code>if</code>.
+					You can think of <code>step</code> as a comparison operation with a implicit cast to float (if your mind works very C-ish).
+					</p>
 					<img src="/lib/img/step.png" />
 				</div>
 				<div id="smoothstep">
 					<h3>Smoothstep</h3>
+					<p>
+					<code>smoothstep(edge0, edge1, x)</code> works like <code>step</code>, except it takes two edge arguments.
+					For <code>x</code> elow <code>edge0</code> and above <code>edge1</code> it is <em>0</em> and <em>1</em>, respectively.
+					The interesting part is between those two values, where the function interpolates smoothly between <em>0</em> and <em>1</em>.
+					</p>
 					<img src="/lib/img/smoothstep.png" />
+					<p>
+					So <code>smoothstep</code> can be used as a differentiable alternative to <code>step</code>, which is useful sometimes but usually just looks better almost always.
+					</p>
 				</div>
+				<div id="clamp">
+					<h3>Clamp</h3>
+					<p>
+					<code>clamp</code> can be used to limit a value to a specific range.
+					</p>
+				</div>
+				<div id="mod">
+					<h3>Mod</h3>
+					<p>
+
+					</p>
+				</div>
+				<div id="other">
+					<h3>Other functions</h3>
+					<ul>
+						<li><code>sin(x)</code>, <code>cos(x)</code>, <code>tan(x)</code>, <code>asin(x)</code>, <code>acos(x)</code>, <code>atan(x)</code>, <code>atan(y, x)</code>
+						<li><code>min(a, b)</code> and <code>max(a, b)</code></li>
+						<li><code>abs(x)</code></li>
+						<li><code>floor(x)</code>, <code>ceil(x)</code>, <code>truncate(x)</code></li>
+						<li><code>exp(x)</code>, <code>pow(a, b)</code>
+					</ul>
+				</div>
+			</section>
+			<section id="snippets">
+				<h2>Snippets</h2>
+				<p>
+				<!--Einseitiges clamp, Rotationsmatrix, …-->
+				</p>
+			</section>
+			<section id="spheretracing">
+				<h2>Sphere tracing (aka raymarching distance functions)</h2>
+				TBD
 			</section>
 			<section id="external">
 				<h2>External ressources</h2>
@@ -232,7 +288,16 @@ void main() {
 						<li><a href="#mix">Mix</a></li>
 						<li><a href="#step">Step</a></li>
 						<li><a href="#smoothstep">Smoothstep</a></li>
+						<li><a href="#clamp">Clamp</a></li>
+						<li><a href="#mod">Mod</a></li>
+						<li><a href="#other">Other functions</a></li>
 					</ul>
+				</li>
+				<li>
+					<a href="#snippets">Snippets</a>
+				</li>
+				<li>
+					<a href="#spheretracing">Sphere tracing</a>
 				</li>
 				<li><a href="#external">External ressources</a></li>
 			</ul>
