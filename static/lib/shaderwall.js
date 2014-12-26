@@ -36,6 +36,7 @@ var Shaderwall = function() {
 	};
 
 	this.updateSize();
+	this.workingSource = "";
 	this.reloadShaders(this.editor.getValue());
 	var compileTimer = null;
 	this.editor.on("change", (function(editor, changes, source) {
@@ -108,6 +109,9 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	var gl = this.gl;
 	var vertexSource = "#ifdef GL_ES\nprecision mediump float;\n#endif\nattribute vec2 pos;\nvoid main(void) {\ngl_Position = vec4(pos, 0.0, 1.0);\n}\n";
 	var fragment = this.compileShader(fragmentSource, gl.FRAGMENT_SHADER);
+	if (fragment === null) {
+		return;
+	}
 	var vertex = this.compileShader(vertexSource, gl.VERTEX_SHADER);
 
 	var program = gl.createProgram();
@@ -116,8 +120,10 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	gl.linkProgram(program);
 	if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 		//alert("linking failed");
+		return;
 	}
 
+	this.workingSource = fragmentSource;
 	gl.useProgram(program);
 	var posAttribute = gl.getAttribLocation(program, "pos");
 	gl.enableVertexAttribArray(posAttribute);
@@ -177,7 +183,7 @@ Shaderwall.prototype.screenshot = function() {
 $(document).ready(function() {
 	var shaderwall = new Shaderwall();
 	$('#save-button').click(function () {
-		var source = shaderwall.editor.getValue();
+		var source = shaderwall.workingSource;
 		var screenshot = shaderwall.screenshot();
 
 		$.post(save_url, { 'source': source, 'screenshot': screenshot, 'authcode': authcode, },function(data) {
