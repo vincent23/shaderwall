@@ -22,7 +22,7 @@ class Shader(Base):
 
 def setup_db():
     global engine
-    engine = create_engine(connection_url)
+    engine = create_engine(connection_url, pool_recycle=1800)
     Base.metadata.create_all(engine)
 
 def db_session():
