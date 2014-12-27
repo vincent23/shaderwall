@@ -23,7 +23,7 @@ def get_gallery(page=1):
     items_per_page = 16
     total_shaders = session.query(Shader).count()
     total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
-    shaders = session.query(Shader).order_by(Shader.id.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
+    shaders = session.query(Shader).order_by(Shader.updated.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
     session.close()
     return { 'shaders': shaders, 'page': page, 'total_pages': total_pages }
 
