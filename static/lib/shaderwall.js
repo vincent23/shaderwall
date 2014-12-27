@@ -146,7 +146,7 @@ Shaderwall.prototype.draw = function(time) {
 Shaderwall.prototype.updateSize = function() {
 	var canvas = this.canvas;
 	var newWidth = document.documentElement.clientWidth;
-	var newHeight = document.documentElement.clientHeight - 50 /*height of navbar*/;
+	var newHeight = document.documentElement.clientHeight - (wall_mode ? 0 : 50 /*height of navbar*/);
 	canvas.width = newWidth / this.quality;
 	canvas.height = newHeight / this.quality;
 	this.gl.viewport(0, 0, canvas.width, canvas.height);
