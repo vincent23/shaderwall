@@ -31,6 +31,7 @@ axes.spines['bottom'].set_position('zero')
 axes.annotate('t', xy=(1,0.14), ha='left', va='top', xycoords='axes fraction', textcoords='offset points')
 axes.annotate('mix(a,b,t)', xy=(-0.07,1), ha='left', va='top', xycoords='axes fraction', textcoords='offset points')
 
+# Draw some dotted lines
 plt.plot([1, 1], [0, 4], color='blue', linewidth=1.5, linestyle="--")
 plt.plot([0, 1], [4, 4], color='blue', linewidth=1.5, linestyle="--")
 
