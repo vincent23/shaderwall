@@ -49,7 +49,8 @@ var Shaderwall = function() {
 			CodeMirror.signal(this.editor, 'change', this.editor, {}, this);
 		}).bind(this), 200);
 	}).bind(this));
-	this.draw(0.0);
+
+	this.resume();
 };
 
 Shaderwall.prototype.initGL = function(canvas) {
@@ -140,8 +141,19 @@ Shaderwall.prototype.draw = function(time) {
 	gl.uniform2f(this.glState.resolutionUniform, canvas.width, canvas.height);
 	gl.uniform1f(this.glState.timeUniform, time / 1000);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-	window.requestAnimationFrame(this.draw.bind(this));
+
+	if (this.running)
+		window.requestAnimationFrame(this.draw.bind(this));
 };
+
+Shaderwall.prototype.resume = function() {
+	this.running = true;
+	this.draw(this.time);
+}
+
+Shaderwall.prototype.pause = function() {
+	this.running = false;
+}
 
 Shaderwall.prototype.updateSize = function() {
 	var canvas = this.canvas;
@@ -182,6 +194,17 @@ Shaderwall.prototype.screenshot = function() {
 
 $(document).ready(function() {
 	var shaderwall = new Shaderwall();
+	$('#pause-button').click(function(e) {
+		if (shaderwall.running) {
+			shaderwall.pause();
+			$(e.target).html("Resume");
+			$(e.target).addClass("active");
+		} else {
+			shaderwall.resume();
+			$(e.target).html("Pause");
+			$(e.target).removeClass("active");
+		}
+	});
 	$('#save-button').click(function () {
 		var source = shaderwall.workingSource;
 		var screenshot = shaderwall.screenshot();
