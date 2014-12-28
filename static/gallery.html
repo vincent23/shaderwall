@@ -10,7 +10,7 @@
 		% for shader in shaders:
 		<div class="col-lg-3 cold-md-4 cold-xs-6">
 			<a class="thumbnail" href="/edit/{{ shader.id }}">
-				<img src="/screenshots/{{ shader.id }}.png" alt="Generic placeholdernail" class="img-responsive">
+				<img src="/screenshots/{{ shader.id }}.png?{{ shader.updated.strftime("%s") }}" alt="Generic placeholdernail" class="img-responsive">
 			</a>
 		</div>
 		% end
