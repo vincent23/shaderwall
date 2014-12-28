@@ -57,6 +57,7 @@ def get_wall(shader_id=None):
 
 @app.route('/edit')
 @app.route('/edit/<shader_id:int>')
+@app.route('/<shader_id:int>')
 @bottle.view('static/editor.html')
 def get_gallery(shader_id=None):
     if shader_id:
