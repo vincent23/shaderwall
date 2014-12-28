@@ -3,7 +3,7 @@ import base64
 import json
 import time
 import datetime
-from database import Shader, setup_db, db_session
+from database import Shader, Vote, setup_db, db_session
 from PIL import Image
 
 screenshot_size = (400, 300)
@@ -174,6 +174,38 @@ def edit_shader(shader_id):
         print("yo?")
 
     return json.dumps({'id': shader_id, 'authcode': authcode, 'redirect': False})
+
+@app.post('/vote')
+def vote():
+    shader_id = bottle.request.params.getunicode('id')
+    vote = bottle.request.params.getunicode('vote')
+    ip = bottle.request.environ.get('REMOTE_ADDR')
+    voting_dict = {
+        'up': 1,
+        'piggy': 0,
+        'down': -1
+    }
+
+    voting = Vote(
+        shader_id = shader_id,
+        ip = ip,
+        value = voting_dict[vote]
+    )
+
+    session = db_session()
+    existing_vote = session.query(Vote).filter(Vote.shader_id == shader_id, Vote.ip == ip)
+    if existing_vote.count():
+        session.close()
+        return bottle.abort(403, 'Forbidden')
+
+    try:
+        session.add(voting)
+        session.commit()
+        session.close()
+    except:
+        return bottle.abort(500, 'Internal Server Error')
+
+    return json.dumps({'error': 'success'})
 
 setup_db()
 
