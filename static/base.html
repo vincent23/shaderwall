@@ -1,3 +1,4 @@
+% import time,os
 <!DOCTYPE html>
 <html>
 	<head>
@@ -20,7 +21,7 @@
 		<link href="/lib/codemirror/lib/codemirror.css" rel="stylesheet">
 		<link href="/lib/codemirror/addon/lint/lint.css" rel="stylesheet">
 		<link href="/lib/codemirror/addon/hint/show-hint.css" rel="stylesheet">
-		<link href="/lib/shaderwall.css" rel="stylesheet">
+		<link href="/lib/shaderwall.css?{{ int(os.path.getmtime("static/lib/shaderwall.css")) }}">
 		<link href="/lib/codemirror/theme/zenburn.css" rel="stylesheet">
 	</head>
 	<body>
@@ -91,7 +92,7 @@
 		<script src="/lib/codemirror/keymap/sublime.js"></script>
 		<script src="/lib/codemirror/mode/glsl.js"></script>
 		<script src="/lib/raf.js"></script>
-		<script src="/lib/shaderwall.js"></script>
+		<script src="/lib/shaderwall.js?{{ int(os.path.getmtime("static/lib/shaderwall.js")) }}"></script>
 		% end
 		<script>
 			$(document).ready(function() {
