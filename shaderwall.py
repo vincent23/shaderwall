@@ -24,8 +24,26 @@ def get_gallery(page=1):
     total_shaders = session.query(Shader).count()
     total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
     shaders = session.query(Shader).order_by(Shader.updated.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
+
+    votes = { 'up': {}, 'down': {} }
+    for shader in shaders:
+        session.refresh(shader)
+        votes['up'][shader.id] = reduce(
+            lambda a,b:
+                a + b.value if b.value > 0 else a,
+            shader.votes,
+            0
+        )
+        votes['down'][shader.id] = reduce(
+            lambda a,b:
+                a + abs(b.value) if b.value < 0 else a,
+            shader.votes,
+            0
+        )
+
     session.close()
-    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages }
+
+    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages, 'votes': votes }
 
 @app.route('/wall/wat')
 def wat_wall():
