@@ -3,7 +3,7 @@ import base64
 import json
 import time
 import datetime
-from database import Shader, setup_db, db_session
+from database import Shader, Vote, setup_db, db_session
 from PIL import Image
 
 screenshot_size = (400, 300)
@@ -24,8 +24,26 @@ def get_gallery(page=1):
     total_shaders = session.query(Shader).count()
     total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
     shaders = session.query(Shader).order_by(Shader.updated.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
+
+    votes = { 'up': {}, 'down': {} }
+    for shader in shaders:
+        session.refresh(shader)
+        votes['up'][shader.id] = reduce(
+            lambda a,b:
+                a + b.value if b.value > 0 else a,
+            shader.votes,
+            0
+        )
+        votes['down'][shader.id] = reduce(
+            lambda a,b:
+                a + abs(b.value) if b.value < 0 else a,
+            shader.votes,
+            0
+        )
+
     session.close()
-    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages }
+
+    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages, 'votes': votes }
 
 @app.route('/wall/wat')
 def wat_wall():
@@ -175,6 +193,38 @@ def edit_shader(shader_id):
         print("yo?")
 
     return json.dumps({'id': shader_id, 'authcode': authcode, 'redirect': False})
+
+@app.post('/vote')
+def vote():
+    shader_id = bottle.request.params.getunicode('id')
+    vote = bottle.request.params.getunicode('vote')
+    ip = bottle.request.environ.get('REMOTE_ADDR')
+    voting_dict = {
+        'up': 1,
+        'piggy': 0,
+        'down': -1
+    }
+
+    voting = Vote(
+        shader_id = shader_id,
+        ip = ip,
+        value = voting_dict[vote]
+    )
+
+    session = db_session()
+    existing_vote = session.query(Vote).filter(Vote.shader_id == shader_id, Vote.ip == ip)
+    if existing_vote.count():
+        session.close()
+        return bottle.abort(403, 'Forbidden')
+
+    try:
+        session.add(voting)
+        session.commit()
+        session.close()
+    except:
+        return bottle.abort(500, 'Internal Server Error')
+
+    return json.dumps({'error': 'success'})
 
 setup_db()
 

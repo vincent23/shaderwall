@@ -228,6 +228,57 @@ $(document).ready(function() {
 		}, "json").fail(function() { alert( "An error occured. Please try again later." ); });
 	});
 
+	$('#vote-up-button').click(function(){
+		$.post(
+			'/vote',
+			{'id': shaderId, 'vote': 'up'},
+			function(){
+				$('#vote-up-button').addClass('disabled');
+				$('#vote-up-button').addClass('btn-success');
+				$('#vote-piggy-button').addClass('disabled');
+				$('#vote-down-button').addClass('disabled');
+			},
+			'json'
+		).fail(function(jqxhr){
+			if(jqxhr.status == 403){
+				$('#vote-up-button').addClass('disabled');
+				$('#vote-piggy-button').addClass('disabled');
+				$('#vote-down-button').addClass('disabled');
+				alert("You may not vote twice. Your first vote is final.");
+			} else {
+				alert("An error occured: " + jqxhr.status);
+			}
+		});
+	});
+	$('#vote-piggy-button').click(function(){
+		$('#vote-up-button').addClass('disabled');
+		$('#vote-piggy-button').addClass('disabled');
+		$('#vote-piggy-button').addClass('btn-primary');
+		$('#vote-down-button').addClass('disabled');
+	});
+	$('#vote-down-button').click(function(){
+		$.post(
+			'/vote',
+			{'id': shaderId, 'vote': 'down'},
+			function(){
+				$('#vote-up-button').addClass('disabled');
+				$('#vote-piggy-button').addClass('disabled');
+				$('#vote-down-button').addClass('disabled');
+				$('#vote-down-button').addClass('btn-danger');
+			},
+			'json'
+		).fail(function(jqxhr){
+			if(jqxhr.status == 403){
+				$('#vote-up-button').addClass('disabled');
+				$('#vote-piggy-button').addClass('disabled');
+				$('#vote-down-button').addClass('disabled');
+				alert("You may not vote twice. Your first vote is final.");
+			} else {
+				alert("An error occured: " + jqxhr.status);
+			}
+		});
+	});
+
 	var hidden = false;
 	var codeMirrorDisplay = $('.CodeMirror')[0].style.display;
 	$('#hide-button').click(function(e) {
