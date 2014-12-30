@@ -83,6 +83,15 @@ def get_gallery(shader_id=None):
         try:
             session = db_session()
             shader = session.query(Shader).filter(Shader.id == shader_id).one()
+
+            votes = session.query(Vote).filter(Vote.shader_id == shader_id, Vote.ip == bottle.request.environ.get('REMOTE_ADDR'))
+            if votes.count() > 0:
+                voting_disabled = ' disabled'
+                vote = 'up' if votes.one().value > 0 else 'down'
+            else:
+                voting_disabled = ''
+                vote = None
+
             shader.views += 1
             session.commit()
             if shader.authcode == authcode:
@@ -99,11 +108,13 @@ def get_gallery(shader_id=None):
                 'save_url': save_url,
                 'authcode': authcode,
                 'screenshot_size': screenshot_size,
+                'voting_disabled': voting_disabled,
+                'vote': vote
             }
         except:
-            return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size, 'shader_source': default_shader_source}
+            return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size, 'shader_source': default_shader_source, 'voting_disabled': '', 'vote': None }
     else:
-        return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size, 'shader_source': default_shader_source}
+        return {'save_url': '/shaders', 'save_button_text': 'Create', 'authcode': '', 'screenshot_size': screenshot_size, 'shader_source': default_shader_source, 'voting_disabled': '', 'vote': None }
 
 @app.route('/help')
 @bottle.view('static/help.html')

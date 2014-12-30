@@ -54,9 +54,9 @@
 					% if get('edit_mode'):
 					<div class="navbar-right navbar-form">
 						<div class="btn-group" role="group">
-							<button type="button" class="btn btn-default" id="vote-up-button"><span class="glyphicon glyphicon-thumbs-up"></span></button>
-							<button type="button" class="btn btn-default" id="vote-piggy-button"><span class="glyphicon glyphicon-adjust"></span></button>
-							<button type="button" class="btn btn-default" id="vote-down-button"><span class="glyphicon glyphicon-thumbs-down"></span></button>
+							<button type="button" class="btn btn-default{{ voting_disabled }}{{! ' btn-success' if vote == 'up' else '' }}" id="vote-up-button"><span class="glyphicon glyphicon-thumbs-up"></span></button>
+							<button type="button" class="btn btn-default{{ voting_disabled }}" id="vote-piggy-button"><span class="glyphicon glyphicon-adjust"></span></button>
+							<button type="button" class="btn btn-default{{ voting_disabled }}{{! ' btn-danger' if vote == 'down' else '' }}" id="vote-down-button"><span class="glyphicon glyphicon-thumbs-down"></span></button>
 						</div>
 						<span style="margin-right: 5em;"></span>
 						<button type="button" class="btn btn-default" id="pause-button">Pause</button>
