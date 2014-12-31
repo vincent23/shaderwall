@@ -38,6 +38,13 @@ class Vote(Base):
     ip = Column(String(40), default='127.0.0.1')
     value = Column(Integer, default=1)
 
+class Event(Base):
+    __tablename__ = 'event'
+    id = Column(Integer, primary_key=True)
+    name = Column(Text)
+    begin = Column(DateTime)
+    end = Column(DateTime)
+
 def setup_db():
     global engine
     engine = create_engine(connection_url, pool_recycle=14400)
