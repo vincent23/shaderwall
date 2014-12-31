@@ -6,6 +6,7 @@ import datetime
 from config import connection_url
 import random
 import string
+from sqlalchemy.ext.hybrid import hybrid_property
 
 def generate_authcode():
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(32))
@@ -20,6 +21,14 @@ class Shader(Base):
     updated = Column(DateTime, default=datetime.datetime.now)
     views = Column(Integer, default=0)
     votes = relationship('Vote')
+
+    @hybrid_property
+    def upvotes(self):
+        return reduce(lambda a,b: a + b.value if b.value > 0 else a, self.votes, 0)
+
+    @hybrid_property
+    def downvotes(self):
+        return reduce(lambda a,b: a + abs(b.value) if b.value < 0 else a, self.votes, 0)
 
 class Vote(Base):
     __tablename__ = 'vote'

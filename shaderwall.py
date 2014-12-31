@@ -4,6 +4,7 @@ import json
 import time
 import datetime
 from database import Shader, Vote, setup_db, db_session
+from sqlalchemy.sql import exists
 from PIL import Image
 
 screenshot_size = (400, 300)
@@ -25,25 +26,7 @@ def get_gallery(page=1):
     total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
     shaders = session.query(Shader).order_by(Shader.updated.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
 
-    votes = { 'up': {}, 'down': {} }
-    for shader in shaders:
-        session.refresh(shader)
-        votes['up'][shader.id] = reduce(
-            lambda a,b:
-                a + b.value if b.value > 0 else a,
-            shader.votes,
-            0
-        )
-        votes['down'][shader.id] = reduce(
-            lambda a,b:
-                a + abs(b.value) if b.value < 0 else a,
-            shader.votes,
-            0
-        )
-
-    session.close()
-
-    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages, 'votes': votes }
+    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages }
 
 @app.route('/wall/wat')
 def wat_wall():
@@ -216,13 +199,16 @@ def vote():
         'down': -1
     }
 
+    session = db_session()
+    if not session.query(exists().where(Shader.id==shader_id)):
+        return bottle.abort(404, 'Not Found')
+
     voting = Vote(
         shader_id = shader_id,
         ip = ip,
         value = voting_dict[vote]
     )
 
-    session = db_session()
     existing_vote = session.query(Vote).filter(Vote.shader_id == shader_id, Vote.ip == ip)
     if existing_vote.count():
         session.close()
