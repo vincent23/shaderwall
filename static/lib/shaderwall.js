@@ -33,6 +33,7 @@ var Shaderwall = function() {
 		posAttribute: -1,
 		resolutionUniform: -1,
 		timeUniform: -1,
+		textureUniform: -1,
 	};
 
 	this.updateSize();
@@ -78,6 +79,16 @@ Shaderwall.prototype.initGL = function(canvas) {
 			-1.0, -1.0,
 		];
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+		var texture = gl.createTexture();
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+		gl.activeTexture(gl.TEXTURE0);
+		gl.bindTexture(gl.TEXTURE_2D, texture);
+
 	}
 	return gl;
 };
@@ -120,7 +131,7 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	gl.attachShader(program, vertex);
 	gl.linkProgram(program);
 	if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-		//alert("linking failed");
+		alert("linking failed");
 		return;
 	}
 
@@ -131,6 +142,9 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	this.glState.posAttribute = posAttribute;
 	this.glState.resolutionUniform = gl.getUniformLocation(program, "resolution");
 	this.glState.timeUniform = gl.getUniformLocation(program, "time");
+	this.glState.textureUniform = gl.getUniformLocation(program, "tex");
+	if(this.glState.textureUniform < 0)
+		alert("zomg!");
 };
 
 Shaderwall.prototype.draw = function(time) {
@@ -140,7 +154,13 @@ Shaderwall.prototype.draw = function(time) {
 	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
 	gl.uniform2f(this.glState.resolutionUniform, canvas.width, canvas.height);
 	gl.uniform1f(this.glState.timeUniform, time / 1000);
+	gl.uniform1i(this.glState.textureUniform, 0);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+	//copyTexImage2D() does not seem to work? Emulate it using readPixels() and texImage2D().
+	//gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.GL_RGBA, 0, 0, canvas.width, canvas.height, 0);
+	gl.readPixels(0, 0, canvas.width, canvas.height, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, this.pixels);
 
 	if (this.running)
 		window.requestAnimationFrame(this.draw.bind(this));
@@ -157,11 +177,14 @@ Shaderwall.prototype.pause = function() {
 
 Shaderwall.prototype.updateSize = function() {
 	var canvas = this.canvas;
+	var gl = this.gl;
 	var newWidth = document.documentElement.clientWidth;
 	var newHeight = document.documentElement.clientHeight - (wall_mode ? 0 : 50 /*height of navbar*/);
 	canvas.width = newWidth / this.quality;
 	canvas.height = newHeight / this.quality;
-	this.gl.viewport(0, 0, canvas.width, canvas.height);
+	this.pixels = new Uint8Array(4 * canvas.width * canvas.height);
+	gl.viewport(0, 0, canvas.width, canvas.height);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
 	canvas.style.width = newWidth + 'px';
 	canvas.style.height = newHeight + 'px';
 };
@@ -178,6 +201,7 @@ Shaderwall.prototype.screenshot = function() {
 	gl.vertexAttribPointer(this.glState.posAttribute, 2, gl.FLOAT, false, 0, 0);
 	gl.uniform2f(this.glState.resolutionUniform, screenshot_width * screenshot_scale, screenshot_height * screenshot_scale);
 	gl.uniform1f(this.glState.timeUniform, this.time / 1000);
+	gl.uniform1i(this.glState.textureUniform, 0);
 	gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
 	var dummycanvas = document.createElement("canvas");
