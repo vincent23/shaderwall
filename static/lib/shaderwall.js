@@ -131,7 +131,7 @@ Shaderwall.prototype.reloadShaders = function(fragmentSource) {
 	gl.attachShader(program, vertex);
 	gl.linkProgram(program);
 	if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-		alert("linking failed");
+		//alert("linking failed");
 		return;
 	}
 
