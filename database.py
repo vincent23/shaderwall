@@ -47,7 +47,10 @@ class Event(Base):
 
 def setup_db():
     global engine
-    engine = create_engine(connection_url, pool_recycle=14400)
+    if connection_url[:5] == 'mysql':
+        engine = create_engine(connection_url, pool_recycle=14400, pool_size=20, max_overflow=100)
+    else:
+        engine = create_engine(connection_url, pool_recycle=14400)
     Base.metadata.create_all(engine)
 
 def db_session():
