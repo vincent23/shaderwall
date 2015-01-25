@@ -22,11 +22,11 @@ default_shader_source_file.close()
 def get_gallery(page=1):
     session = db_session()
     items_per_page = 16
-    total_shaders = session.query(Shader).count()
-    total_pages = total_shaders / items_per_page + (1 if total_shaders % items_per_page != 0 else 0)
-    shaders = session.query(Shader).order_by(Shader.updated.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all()
+    shaders = session.query(Shader)
+    total_pages = shaders.count() / items_per_page + (1 if shaders.count() % items_per_page != 0 else 0)
+    session.close()
 
-    return { 'shaders': shaders, 'page': page, 'total_pages': total_pages }
+    return { 'shaders': shaders.order_by(Shader.updated.desc()).offset(items_per_page * (page - 1)).limit(items_per_page).all(), 'page': page, 'total_pages': total_pages }
 
 @app.route('/wall/wat')
 def wat_wall():
