@@ -7,6 +7,7 @@ from config import connection_url
 import random
 import string
 from sqlalchemy.ext.hybrid import hybrid_property
+from multiprocessing.util import register_after_fork
 
 def generate_authcode():
     return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(32))
@@ -47,10 +48,8 @@ class Event(Base):
 
 def setup_db():
     global engine
-    if connection_url[:5] == 'mysql':
-        engine = create_engine(connection_url, pool_recycle=14400, pool_size=20, max_overflow=100)
-    else:
-        engine = create_engine(connection_url, pool_recycle=14400)
+    engine = create_engine(connection_url, pool_recycle=14400)
+    register_after_fork(engine, engine.dispose)
     Base.metadata.create_all(engine)
 
 def db_session():
